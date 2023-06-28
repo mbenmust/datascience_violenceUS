@@ -1,0 +1,1223 @@
+---
+title: "**Analysis of the impact of the video games industry on violence in the United States in 2020**"
+output:
+  html_document:
+    toc: true
+    toc_float: true 
+    toc_depth: 3
+    code_folding: hide 
+    theme: journal 
+    highlight : tango 
+author: "Meriem Ben Mustapha , Mélissa Meuwly , Sohayb Fahli"
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## **1.Introduction**
+
+
+### **1.1 Overview** 
+
+We first have decided to analyze the impact of the video games industry on violence in the USA in 2020. However, the data sets chosen were not matching each other and did not include a common variable that could help us to compare them. We also could not find a recent data set about video games by state given that this type of information is not public. 
+
+Our data set about gun violence was too specific compared to our objective which is to analyze violence in general and the types of crimes that could be impacted by video games. 
+
+Our analysis is about the impact of the video games industry on violence in the USA.We opted for a data set representing the number of arrests by type and by state from a reliable source which is the Federal Bureau of Investigation. 
+
+Therefore, to improve our analysis while not getting off topic we have decided to analyze the impact of the video games industry on violence in the USA in 2020. 
+
+
+### **1.2 Motivation**
+
+
+Video games were progressively rooted in Generation Z life over the years whether through games consoles, computers, or mobile phones. Over last years,the video games industry is [*the leading gaming market in the United States in terms of revenue*](https://newzoo.com/insights/rankings/top-10-countries-by-game-revenues). 
+
+Moreover, [*a study has shown that in 2020, 3 out 4 people played video games*](https://www.npd.com/news/press-releases/2020/more-people-are-gaming-in-the-us/#:~:text=PORT%20WASHINGTON%2C%20N.Y.%2C%20July%2020,more%20than%20one%20device%20vs.), a significant indicator that has motivated us to ask ourselves if violent behavior in the US can impact US citizens' violent behavior.
+
+To build our answer, we also wanted to ask ourselves if social factors such as education ,through high school graduation, poverty, unemployment in the US could drive video games industry profit and therefore violent behavior. 
+
+
+### **1.3 Inspiration**
+
+
+Our topic choice was firstly guided by [this article.](https://www.cnbc.com/2019/12/20/scientists-disagree-completely-on-the-impact-of-violent-video-games.html) 
+
+Secondly, we got inspired by a famous show highlighting the negative impact of technological advancement on society. In one episode we could see how characters from different social environments are living through video games and how the distance between real world and video games is disappearing over the years. 
+
+Therefore, we wanted to see if the video games industry could be related to social variables that differentiate people.
+
+
+### **1.4 Research questions**
+
+
+1. Does the video games industry encourage the number of arrests in the different American states? 
+
+2. What types of crime may be encouraged by the video games industry? 
+
+3. To what extent does the video games industry impact violence in higher education level states compared to lower ones? 
+
+4. Is video games revenue higher or lower in higher unemployment states compared to lower unemployment states? 
+
+5. Is video games revenue higher in higher poverty rate states, and does poverty have an impact on crime?
+
+6. What are the factors that impact violence in the USA and does video games industry significantly impact violence ?
+
+### **1.5 Background**
+
+As students with a little knowledge in coding languages and therefore Data Science, it was a challenge for us at first to adjust to a new way of thinking and to learn R language this year. Through this project we picked up the basics of R quickly and added some value to it with some additional research and tools available on the internet.
+
+
+
+## **2.Data **
+
+
+### **2.1 Data Source**
+
+
+We decided to investigate all states of America given that it is one of the countries that has the biggest gaming market in the world. Furthermore, we have noticed that US data sets are more accessible to the public. 
+
+Our analysis will be based on 5 data sets with a common variable which is the state's names, this will allow us to compare them to each other.
+
+#### **2.1.1 Federal tax impacts of video games industry Dataset**
+
+
+This data set has been selected  from [*The 2020 Economic impact report of Video Games in the 21st century.*](https://www.theesa.com/video-game-impact-map/wp-content/uploads/sites/2/2020/12/Video-Games-in-the-21st-Century-2020-Economic-Impact-Report-Final.pdf) This document's table 10 is our selected data set , it represents federal tax which is the same percentage among all states, it allows us to have an idea about how much revenue video games industry generates (that is why we will call this variable video games revenue thourgh our interpretations). We will mostly focus on the total industry impact by state (Last variable).We did not have to do any modifications to this data set.
+
+
+
+```{r echo=FALSE , results='asis'}
+library(knitr)
+knitr::kable(cbind(
+  c(
+    "**State**",
+    "**Direct_impact**",
+    "**Indirect_impact**",
+    "**Induced_impact**",
+    "**Total_impact**",
+    "**Total_industry_impact**"
+  ),
+  c(
+    "Name of the American state ",
+    "Direct State Impact of In-State Video Game Industry",
+    "Indirect State Impact of In-State Video Game Industry",
+    "Induced State Impact of In-State Video Game Industry",
+    "Total State Impact of In-State Video Game Industry",
+    "State Impact of U.S. Industry Overall"
+  )
+), col.names = c('Variable', 'Meaning'))
+```
+
+```{r}
+fedtax_data <-
+  read.csv(file = here::here("data/fedtax_2020.csv"))
+```
+
+
+#### **2.1.2 Education data set**
+
+
+Education is a large topic in the United States of America, compiling different types of schools and degrees, which makes it hard to find relevant data about the level of each state in schools. We chose to differentiate the states by the high school graduation rate in public high schools.We have created a data set from [*an article of US.News and World Report*](https://www.usnews.com/education/best-high-schools/articles/see-high-school-graduation-rates-by-state).We have modified the data set in order to keep the most significant information which is the average graduation rate by state. 
+
+```{r}
+knitr::kable(cbind(
+  c("**State**", "**Avg_Grade_rate**" ), 
+  c("Name of the American Sate", "The average graduation rate of In-State high schools students"
+    )
+), col.names = c('Variable', 'Meaning')) 
+```
+
+```{r}
+edu_data <-
+  read.csv(file = here::here("data/average_graduation_rate_2020.csv"))
+```
+
+#### 2.1.3 **Unemployment data set**
+
+
+This data set is made from collected data about monthly unemployment rate per state,we created a new data set and added a new column to it that computes the annual/average unemployment rate in each American state in 2020.This data set is from [*The US Bureau of labor statistics*](https://www.bls.gov/lau/lastrk20.htm)
+
+```{r}
+knitr::kable(cbind(
+  c("**State**", "**Unemployment_rate**", "**Rank**"),
+  c("Name of the American Sate", "Annual unemployment rate in the state", "Unemployment ranking of the state")
+), col.names = c('Variable', 'Meaning'))
+```
+
+```{r}
+unemployment_data <-
+  read.csv(file = here::here("data/unemployment_rate_2020.csv"))
+```
+
+
+#### **2.1.4 Crime data set**
+
+
+We have decided to clean this data set from [*The FBI Crime Data Explorer*](https://crime-data-explorer.app.cloud.gov/pages/explorer/crime/arrest) by only keeping the category of all ages because the ages distinction will not be needed in our analysis. It represents all types of arrests regarding different crimes committed within American states in 2020. This data set will help us understand what type of crime could be related to the video games industry.
+
+```{r}
+knitr::kable(cbind(
+  c("**State**",
+                     "**Total_all_ages**",
+                  "**Type_of_crime**",
+                  "**2020_estimated_pop**"
+    ), 
+c(
+"Name of the American State", " All ages range", "Number of people arrested for this felony ","Number of people estimated in this state in 2020"
+                     )
+), col.names = c("Variable", "Meaning"))
+```
+
+```{r}
+crime_data <-
+  read.csv(file = here::here("data/arrests_bystate_2020.csv"))
+```
+
+#### **2.1.5 Poverty data set**
+
+
+Data about poverty in the United States in 2020 has been estimated by [*U.S. Census Bureau, Small Area Income and Poverty Estimates (SAIPE) Program*](https://www.census.gov/data/datasets/2020/demo/saipe/2020-state-and-county.html). Even though this data set is based on statistical estimations we assumed that it is reliable and relevant for our research.
+
+First, we decided to clean it by only keeping the category of all ages, indeed we did not have to keep all the age ranges and wanted to have the overall picture of every state. We also selected other variables that could help us to interpret our results afterwards.
+
+```{r}
+knitr::kable(cbind(
+  c(
+    "**State**", 
+    "**All ages**",
+    "**Poverty_est_all_ages**",
+    "**90_CI_LB**",
+    "**90_CI_UB**",
+    "**poverty_perc_all_ages**",
+    "**90_CI_LB_%**", 
+    "**90_CI_UB_%**",
+    "**Median_household_income**",
+    "**90_CI_LB**",
+    "**90_CI_UB**"
+    ), 
+  c(
+    "Name of the American State",
+    "All ages range",
+    "Number of people estimate to be in situation of poverty",
+    "Lower bound of a 90% confidence interval",
+    "Upper bound of a 90% confidence interval",
+    "Number converted in % of people in poverty situation",
+    "Lower bound of a 90% confidence interval converted in %",
+    "Upper bound of a 90% confidence interval converted in %",
+    "Median income of household",
+    "Lower bound of a 90% confidence interval of median houselhold income",
+    "Upper bound of a 90% confidence interval of median houselhold income"
+  )
+), col.names = c("Variables","Meaning"))
+```
+
+```{r}
+poverty_data <-
+  read.csv(file = here::here("data/poverty_by_state_2020.csv"))
+```
+
+
+## **3.Data Wrangling**
+
+
+### **3.1 Federal tax impacts of video games industry Dataset**
+
+
+The most useful variable in this data set is " Total impact of the industry " in every state of America. Indeed, details about the tax forms are not relevant for our study therefore we will create a new data set using data.frame() representing the total impact of the video games industry in every state mutate. Renaming the variables is crucial , to do so we will use <mark>rename()</mark>.
+
+We also have to check how many states are taken into consideration in every data set to make sure we work with the same number of states to do so we will use <mark>length()</mark> to count how many data do we have in the *state* column. 
+
+
+```{r, results='hide'}
+library(dplyr) 
+# Lowering state column characters to make all the datasets fit
+names(fedtax_data) <- tolower((names(fedtax_data)))
+fedtax_data$state <- tolower(fedtax_data$state)
+fedtax_data2 <- data.frame(fedtax_data$state,fedtax_data$total_industry_impact) 
+# Creation of a new data set with the total industry impact by state 
+fedtax_data2 <- fedtax_data2 %>% 
+  rename(state = fedtax_data.state , total_industry_impact = fedtax_data.total_industry_impact) 
+# Renaming the columns of the new data set 
+length(fedtax_data2$state) 
+```
+
+### **3.2 Crime Dataset**
+
+
+The crime dataset has a lot of information concerning the different types of crimes in the United States of America. We started by lowering the *state* column using <mark>tolower()</mark>, to have the same format in all the different dataset, helping to the final merge of the datasets. We also changed the names of the colums to insure that there are no spaces within the column names. Then we removed *Total_all_ages*. We made sure that our numbers were read as 'double' and not 'characters', by removing the commas and transforming them thanks to <mark>gsub()</mark> and <mark>as.numeric()</mark> functions. For coherence we took off the numbers contained in two of the states names in *state* column.
+
+Finally, we created a new column, called *non_violent_crimes*, which is the result of the substraction of *total_all_classes* by *violent_crime*.We kept the variables useful for our further analysis in *crime_data2* , which are *state*, *total_all_classes*, *violent_crimes*, *non_violent_crimes*, and *estimated_pop_2020*.
+
+```{r, results='hide'}
+# Assign the data set lowercase column names 
+names(crime_data) <- tolower((names(crime_data)))
+crime_data$state <- tolower(crime_data$state)
+names(crime_data)[3] <- "total_all_classes"
+names(crime_data)[34] <- "estimated_pop_2020"
+names(crime_data)[11] <- "larceny_theft"
+names(crime_data)[12] <- "motor_vehicle_theft"
+names(crime_data)[22] <- "sex_offenses"
+# Remove column "total_all_ages because it is not useful for our analysis 
+crime_data <- crime_data[,-2]
+ 
+crime_data$total_all_classes <- as.numeric(gsub(",","",crime_data$total_all_classes))
+crime_data$violent_crime <- as.numeric(gsub(",","",crime_data$violent_crime))
+crime_data$estimated_pop_2020 <- as.numeric(gsub(",","",crime_data$estimated_pop_2020))
+crime_data2 <- crime_data[, c(1, 2:3, 33)]
+crime_data2$state[crime_data2$state == 'illinois7'] <- 'illinois'
+crime_data2$state[crime_data2$state == 'maryland5'] <- 'maryland'
+crime_data2$state[crime_data2$state == 'california '] <- 'california'
+# Creating a non-violent crime section by substracting the total by the violent crimes
+crime_data2$non_violent_crime <- (crime_data2$total_all_classes - crime_data2$violent_crime)
+# Putting the population column at the end
+crime_data2 <- crime_data2[, c(1,2,3,5,4)]
+# Removing the NA values 
+crime_data2 <- crime_data2 %>% filter(!is.na(violent_crime))
+```
+
+
+### **3.3 Poverty Dataset** 
+
+
+For the poverty dataset, we started by changing the column names to ensure that there are no spaces using <mark>names()</mark>. We selected the pertinent columns that are *state*, *pov_est_all_ages*, *pov_perc_all_ages*, and *Med_househ_inc* and created the dataframe *poverty_data2*. As for the other datasets, we used <mark>tolower()</mark> on the *state* column to make datasets joignables.
+
+Finally, we make sure that our numbers are read as doubles, using the <mark>gsub()</mark> to take out the commas and <mark>as.numeric()</mark> to transform the information into the right type.
+
+```{r, results='hide'}
+# Making sure that there are no spaces in our column names
+names(poverty_data)[2] <- "pov_est_all_ages"
+names(poverty_data)[5] <- "pov_perc_all_ages"
+names(poverty_data)[8] <- "Med_househ_inc"
+poverty_data
+```
+```{r, results='hide'}
+# Selecting the relevant columns for ou analysis
+poverty_data2 <- poverty_data[, c(1:2, 5, 8)]
+# Lowering state column characters to make all the datasets fit
+poverty_data2$State <- tolower(poverty_data2$State)
+# Transform our character column into double to analyze the numbers, by removing the comas
+poverty_data2$pov_est_all_ages <- as.numeric(gsub(",","",poverty_data2$pov_est_all_ages))
+poverty_data2$pov_perc_all_ages <- as.numeric(gsub(",","",poverty_data2$pov_perc_all_ages))
+poverty_data2$Med_househ_inc <- as.numeric(gsub(",","",poverty_data2$Med_househ_inc))
+poverty_data2
+```
+
+
+### **3.4 Education Dataset** 
+
+
+The education dataset is a pretty simple one. We just lowered the *state* names as for the other datasets.
+
+```{r, results='hide'}
+# Change the name of the State column to fit all the data sets
+names(edu_data)[1] <- "State"
+# Lowering state column characters to make all the data sets fit
+edu_data$State <- tolower(edu_data$State)
+edu_data
+```
+
+
+### **3.5 Unemployment Dataset** 
+
+
+As for the education dataset, the unemployment rate is a simple one. We created the *unemployment_data2* by only selecting the *state* and *unemployment_rate* columns, as the rank is not an interesting variable for our analysis. To avoid spaces, we changed the name of the second column and finally we lowered the *state* column in order to make our data sets compatible.
+
+```{r, results='hide'}
+# Deleting last column because rank is unnecessary in our analysis
+unemployment_data2 <- unemployment_data[, -3]
+# Making sure that there are no spaces in our column names
+names(unemployment_data2)[2] <- "unemployment_rate"
+# Lowering state column characters to make all the datasets fit
+unemployment_data2$State <- tolower(unemployment_data2$State)
+unemployment_data2
+```
+
+
+### **3.6 Overall Dataset**
+
+
+To finish with the data wrangling, we chose to go for merging all our info into one unique dataset called *overall_data*. This data set contains all  data sets merged by *state* using the R basis <mark>merge()</mark> function. We merged each time two datasets by creating a new one, until having them all under a single dataframe at the end. This will ease the analysis part.
+
+```{r, results='hide'}
+# Creating a common dataframe with all the information, to base all our analysis on it
+names(edu_data) <- tolower((names(edu_data)))
+names(fedtax_data) <- tolower((names(fedtax_data)))
+fed_edu <- merge(edu_data, fedtax_data, by ="state")
+names(unemployment_data2) <- tolower((names(unemployment_data2)))
+fed_edu_unem <- merge(unemployment_data2, fed_edu, by ="state")
+names(fed_edu_unem) <- tolower((names(fed_edu_unem)))
+fed_edu_unem_crime <- merge(crime_data2, fed_edu_unem, by = "state")
+names(poverty_data2) <- tolower((names(poverty_data2)))
+overall_data<- merge(poverty_data2, fed_edu_unem_crime, by ="state")
+overall_data
+# Scaling our data to have it per capita (for the Analysis part) 
+overall_data <- overall_data %>% mutate(fedtax_percapita = total_industry_impact/estimated_pop_2020)
+overall_data <- overall_data %>% mutate(arrests_percapita = total_all_classes/estimated_pop_2020)
+overall_data <- overall_data %>% mutate(violent_crime_percapita = violent_crime/estimated_pop_2020)
+overall_data <- overall_data %>% mutate(nonviolent_crime_percapita = non_violent_crime/estimated_pop_2020)
+```
+
+## **4.Exploratory data analysis** 
+
+
+### **4.1 Mapping the total industry federal tax impact by state**
+
+
+In order to represent the spread of the federal tax impact of the video games industry among the United States , we have decided to map the United States and represent in it  the amount of federal tax generated by the industry in every state. To do so we have used <mark>map_data()</mark> from the **package maps** and turned data from it into a data frame suitable for plotting with **ggplot2**.
+
+It gave us a table that represents the coordinates of every American State.This table is the basis of every map in our project , given that the common variable between the data sets is *state* , it allows us to make every information about American states easier to visualize. After reading both data tables we had to make some changes to them such as :
+
+* Converting uppercase letters to lowercase string with <mark>tolower()</mark> 
+
+* Change the name of the variable *region* to *state* with  <mark>rename()</mark>
+
+* Delete the variable *subregion* from States because we do not need it 
+
+Therefore , <mark>left_join()</mark> allowed us to assign coordinates system (*lat*,*long*) to every *federal tax impact* by state by joining both tables to each others.
+
+```{r, results='hide'}
+# Install the packages needed 
+library(maps)
+library(mapproj)
+library(tidyverse)
+# Get USA map from maps package 
+states <- map_data("state")
+view(states)
+# Adjusting name of variables for matching 
+fedtax_data2 <- mutate(fedtax_data2 , state = tolower(state))
+states <- states %>% 
+rename(state=region) 
+states <- states[,-6]
+# Join both data sets by state and create a new dataframe
+fedtax_data3 <- fedtax_data2 %>%
+select(state,total_industry_impact) %>%
+left_join(states, by = "state")
+```
+
+However , the new table needed some data wrangling so that we can map our data correctly.Hence, we filtered the NA values given that the table was made from <mark>map_data()</mark> and dropped them. Some states coordinates were missing such as : Alaska and Hawaii.
+
+Even though the *total_industry_impact variable* was represented in millions , it had extreme values which flatten the contrast between states,values went from 5.9 to 4,814.4 ($ millions).We applied the log transformation with <mark>log10()</mark> to the *total_industry_impact variable* to amplify differences in the "normal" range. 
+
+```{r, results='hide'}
+# Detect row containing null data then subset them - state that does not match any group 
+filter(fedtax_data3,is.na(group)) 
+fedtax_data3 <- fedtax_data3 %>% filter(!is.na(group))
+# Transform values into log values in order to reach a normal distribution and to de-emphasize the difference between values 
+fedtax_data3$total_industry_impact <- log10(fedtax_data3$total_industry_impact)
+# Arrange the data in descending order 
+fedtax_data3 <-  arrange(fedtax_data3,desc(total_industry_impact))
+# Ranking of the highest revenue generated (additional tool for interpretation)
+view(unique(fedtax_data3[,1]))
+```
+
+Afterwards , we wanted to map the *total_industry_impact* of video games to the USA map. We have created this map with **ggplot2 package**. First, we used the <mark>ggplot()</mark> to draw the axes of our map that are *long* and *lat*, filled it with the *total_industry_impact data*,set the axes title, plot title and then set layout. 
+
+```{r, results='hide'}
+library(plotly)
+library(ggplot2)
+map1 <- ggplotly(ggplot(fedtax_data3 , aes(long,lat),label=state) + 
+  geom_polygon(aes(group= group, fill = total_industry_impact , label=state) ,color="black") +
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), 
+axis.text.y=element_blank(), axis.ticks.y=element_blank(),plot.title = element_text(face = "bold",hjust = 0.5)) +
+  ggtitle("Revenue generated by State", subtitle = "How is revenue generated by The Video Games Industry spread all over the USA ? ") +
+  scale_fill_gradient(name ="Total Revenue" ,low = "#FFFFCC" , high = "#336600")+
+  coord_map())
+  
+map1
+```
+
+Through this first map we can see that California, Washington, Texas, Florida, New York and Nevada generate high revenues from the video games industry. To verify this statement we have to analyze the population in these states, because a higher population will directly lead to a higher number of video games sales.
+
+
+### **4.2 Scaling map **
+
+
+After analyzing our data sets, we noticed that all of our variable data are based on the number of inhabitants per state, hence we have made a scaling map that will help us to compare all of our maps to it in order to have more coherent results. 
+
+```{r, results='hide'}
+# Joining data sets to do the map 
+pop_usa <- crime_data2 %>%
+select(state,estimated_pop_2020) %>%
+left_join(states, by ="state")
+# Amplifying differences  
+pop_usa$estimated_pop_2020 <- log10(pop_usa$estimated_pop_2020)
+# Arrange the data in descending order 
+pop_usa <-  arrange(pop_usa,desc(estimated_pop_2020))
+# Raking of the most populated states (additional tool for interpretation)
+view(unique(pop_usa[,1])) 
+# Mapping 
+scaling_map <-ggplotly(ggplot(pop_usa, aes(long,lat)) + 
+geom_polygon(aes(group = group, fill = estimated_pop_2020 , label=state ) ,color="black") +
+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), 
+axis.text.y=element_blank(), axis.ticks.y=element_blank(),plot.title = element_text(face = "bold",hjust = 0.5)) +
+ggtitle("Estimated population by state") +
+scale_fill_gradient(name ="Estimated population (log10)" ,low = "#FFFFCC" , high = "#336600") +
+  coord_map())
+scaling_map
+```
+
+After comparing map1 to our scaling_map we can say that out of the 6 states that generate the highest revenue from video games industry (California,Washington,Texas, Florida, New York and Nevada) 5 are heavily populated (California,Texas,Florida,Washington) . The revenue generated by the video games industry in a particular state is likely to be related to the number of inhabitants in that state. In general, in a large population it is more likely to have more potential video games customers.
+
+Our maps comparison shows that some states have a high video games revenue while having a low population : Pennsylvania, Alabama and Illinois. It means that there could be a relationship between video games and violence but others factors have to take a closer look to other social factors of violence. 
+
+
+### **4.3 Mapping the number of arrests by state**
+
+After visualizing the distribution of federal taxes in the USA , we wanted to visualize another variable which the number of arrests in every state.The raw data set represented number of arrests by every type of crime, however for our analysis we mostly wanted to see the overall of arrests which given by *total_all_classes*.We started by joining *crime_data* and *states*  therefore do the necessary data wrangling in order to make the mapping feasible.
+
+*pop the NA values with <mark>is.na()</mark> and removing them
+
+*Amplifying differences in total_all_classes with <mark>log10()</mark> in order to have a more relevant map
+
+
+```{r, results='hide'}
+# Join data set of crime and states for the mapping 
+crime_data3 <- crime_data2 %>%
+select(state,total_all_classes) %>%
+left_join(states, by = "state")
+# Filter NA values 
+filter(crime_data3,is.na(group))
+crime_data3 <- crime_data3 %>% filter(!is.na(group))
+# Amplifying differences 
+crime_data3$total_all_classes <- log10(crime_data3$total_all_classes)
+```
+
+As above, we wanted to do the same map but this one would represent a new variable which is the number of arrests from all classes in every state.The purpose of this map was to visualize common areas, that were paying a high amount of federal tax and a high number of of arrests, all types of crimes included. 
+
+```{r, results='hide'}
+map2 <- ggplotly(ggplot(crime_data3 , aes(long,lat)) + 
+geom_polygon(aes(group= state, fill = total_all_classes),color="black") +
+theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), 
+axis.text.y=element_blank(), axis.ticks.y=element_blank(),plot.title = element_text(face = "bold",hjust = 0.5)) +
+ggtitle("Criminality in the USA") +
+scale_fill_gradient(name ="Number of arrests from all classes" ,low = "#FFFFCC" , high = "#336600")+
+coord_map())
+map2
+```
+
+As the map shows, criminality is mostly concentrated in California, Florida and Texas .There is also a high criminality level in Tennessee,Virginia and North Caroline.
+
+The relationship between the number of arrests by state and the population of that state is likely to be complex and may depend on a number of factors. In general, however, a larger population is likely to be associated with a higher number of arrests, since there will be more potential offenders in the population. It is important to note that the number of arrests in a state may not necessarily be a good indicator of the overall level of crime in that state, since the number of arrests can be affected by other factors. 
+
+We have the data at our disposable , we are able to scale our data with the *scaling_map*, we notice that the states that have a high number of arrests without necessarily a high population are : Tennessee, Virginia and North Carolina. We can conclude that criminality is high in these states. 
+
+
+### **4.4 Comparison of number of arrests and video games industry**
+
+After mapping these variables separately through, we wondered if there was a relationship between criminality and federal revenue generated by the video games industry. Therefore we needed to put in common both data sets by state. Given that *crime_data3* had several rows for every state corresponding to the mapping coordinates, we removed duplicated rows with <mark>unique()</mark> 
+
+```{r}
+# Join crime data set and number of arrests - removing duplicate rows 
+fedtax_crime_df <- crime_data3 %>%
+  select(state,total_all_classes) %>%
+  left_join(fedtax_data2, by = "state") %>%
+  unique()
+```
+
+The **package plotly** allowed to use to make an interactive plot representing the federal tax amount paid in relation to the number of arrests in every American State.The function <mark>mutate()</mark> adds a *text* variable to the table.This new variable will paste data concerning every state by clicking on every dot of the map. One more time, we have to scale both of our axis by applying a mathematical function, this has been possible with <mark>scale_y_log10()</mark>  and <mark>scale_x_log10()</mark>. 
+
+
+```{r}
+library("plotly")
+plot1 <- fedtax_crime_df %>% 
+mutate(text=paste0("State:",state),"\nNumber of arrests:",round(total_all_classes,1),"\nFederal tax generated by VG industry:",total_industry_impact ) %>% 
+ggplot(aes(total_industry_impact,total_all_classes,label=state)) +
+scale_x_log10()+
+scale_y_log10()+
+geom_point(size=3,color="#99CC33")+
+labs(x= "Number of arrests ", y="Video games revenue")
+ggplotly(plot1,tooltip = "all")
+plot1
+```
+
+
+On one hand, *Plot1* resulted in a positive relationship between the revenue generated by the video games industry and the number of arrests. One possible scenario could be : A high revenue comes from a high number of video games sales.These video games could lead to an aggressive behavior of its users, encouraging them to commit crime and then increase the number of arrests in every state. On the other hand, we can not argue about the strength of this relationship, a positive correlation. 
+
+
+### **4.5 Violent VS Non-Violent crimes**
+
+
+
+To get deeper into our analysis we will separate the number of arrests into two types so that we can see what type of crime (behavior) is more related to the revenue generated by the video games industry and more present in every state. 
+
+According to [*the US.Department of justice*](https://nij.ojp.gov/topics/crimes/violent-crime) crimes that are considered as violent ones are : rape, sexual assault, robbery, assault and murder.Thus we have divided all crimes in two types : violent and non-violent crimes as explained in the data wrangling part of our analysis. A violent crime is a crime in which the perpetrator uses or threatens to use force or violence against a person. Examples of violent crimes include assault, robbery, and murder. 
+
+We have shown above that there was a positive relationship between the total revenue of the video games industry but we did not know what type of crime was prominent in each state.
+
+A bar plot is the best way to easily represent what type of crime is more present in one state than another. To do so we have used <mark>plot_ly()</mark>. We set the type of the plot which is a bar plot,and added the name of our two comparable variables.
+
+
+```{r}
+crime_data2 
+# Arrange the data in descending order 
+ crime_data2 <-  arrange(crime_data2 ,desc(total_all_classes))
+# Ranking of the most populated states
+view(unique(crime_data2[,1]))
+# Order states in descending order by number of violent crimes 
+crime_data2$state <- reorder(crime_data2$state, -crime_data2$violent_crime)
+# Arrange the data in descending order 
+pop_usa <- arrange(pop_usa,desc(estimated_pop_2020))
+# Interactive bar plot to see differences between number of violent and non violent crimes in every state 
+plot2 <- plotly:: plot_ly(crime_data2, x = ~state, y = ~violent_crime, type = 'bar', 
+                          name = 'Number of violent crimes',
+                          color = "#FFFFCC" )%>% 
+         plotly::add_trace(y = ~non_violent_crime, name = 'Number of non violent crimes',
+                           color = "#336600") %>%
+         layout(title= list(text = "Violent VS Non-Violent crime in the US"), 
+                legend=list(title=list(text='Type of crime')), 
+                xaxis = list(title = list(text ='State')),
+                yaxis =list(title = list(text ='Number of crimes (in millions)')),
+                plot_bgcolor='#e5ecf6')
+plot2
+```
+
+First, there are more instances of non-violent crime than violent crime in states, so non-violent crime may be the type of crime that helps explain the potential relationship between video games and crime. This suggests that there may be a link between videogames and non-violent crime.
+
+As the map illustrates, high levels of crime are primarily concentrated in the states of California, Florida, and Texas. Tennessee, Virginia, and North Carolina also have relatively high levels of criminal activity. These crimes tend to be non_violent ones.
+ 
+### **4.6 Mapping the graduation per state**
+
+Now, that we showed that a relationship might exist between crime, especially non-violent one, and the revenue generated by the sales of video games, we want to derive our attention to another socioeconomic factor which is the *Graduation Rate per state.* To first do that, we need to have an overview of the education level in the U.S. This will help us to understand the rest during further analysis of the relationship between education and the video games revenue.
+
+Using the data set giving us the average graduation rate per state in the U.S, we create a map showing where the percentage of graduation are higher or lower. To design this map, we used the packages **tmap** and **spData**. We first had to make them match, so we had to change the names of the columns in order to merge them together, using the function <mark>left_join()</mark>. This allows us to create a new data set including the geographical characteristics of the states and the educational data. So, the darker areas represent the states where you can find the highest graduation rate and it declines as the color becomes a lighter green. Plus, here our map is interactive, by using the <mark>tmap_mode("view")</mark> **tmap** package, our map becomes interactive.
+
+```{r}
+library(tmap)
+library(spData)
+states_1 <- us_states
+# Data wrangling on states_1 to keep only what is of interest for the map 
+states_2 <- states_1 %>% 
+rename(state=NAME)
+states_3 <- states_2[,c(-1,-3,-4:-6)]
+names(states_3) <- tolower((names(states_3)))
+states_3$state <- tolower(states_3$state)
+#Merge the geographical data of the US and the educational data 
+edu.geo1 <- left_join(states_3, edu_data, sort=FALSE, by="state")
+map3 <- tm_shape(edu.geo1) + tm_polygons(col="avg_grad_rate", palette="BuGn")+ tm_style("classic")
+tmap_mode("view")
+map3
+```
+
+ 
+What does this map tell us then ?
+
+We can indeed see that only 2 states stand below the 80/85% part, Arizona, with 74% and New Mexico with 78%, which is a significant percentage, but in comparison to the other states, they are the only two below 80%. We can find the highest percentage in Texas and Kentucky, with 94%. Several states follow closely with a really high percentage as well (93, 92, 91%).
+
+To make a link already with crimes and education, we can look at states with a high level of crimes, we saw before that the crimes are more concentrated in Tennessee, Virginia and North-Carolina. However the graduation percentage of the latest are respectively 90%, 93% and 90%. Even if most of those crimes tend to be non-violent ones, we can see that states with a high level of crimes, also have a high level of education. From what we can see from graphs, the relationship does not seem to exist, we have to continue to match the data and see if some other results emerge.
+
+ 
+### **4.7 Link between number of arrest in higher or lower education states and video games revenue**
+
+Another social characteristic to be analyzed regarding video games industry revenue is violence, our indicator is the number of arrests , but specifically regarding the level of education. In part 4.6, we already tried to see if there was a relationship between violence and education. We concluded that it was probably not the case, it was only an assumption. To make our assumption more consistent, we can first perform a graph representing the relationship between education and crime. Using <mark>ggplot()</mark> function. We will analyze this relationship more deeply further in the project. 
+
+#### **4.7.1 Visual representation between number of arrests and education**
+
+
+```{r}
+library(ggplot2)
+plot3 <- ggplot(
+  data = overall_data,
+  mapping = aes(x = avg_grad_rate, y = total_all_classes)
+) +
+  labs(title = "Visual Relationship between the number of arrests and  the education level",
+       width = 60, 
+       x = "Average Graduation Rate", 
+       y = "Number of Arrests") +
+  geom_point() +
+  geom_smooth(method = lm,
+              color = "red",
+              size = 0.3)
+plot3
+```
+
+After doing the graph, we can now confirm our assumptions. Hence, we see that the number of arrests in regard to education follows a slight linear path, but it is really scattered across the different graduation rate.Therefore, based on our graphs analysis we notice some contradictory interpretations that need to be analyzed through a statistical analysis.
+
+#### **4.7.2 Visual representation between education and video games revenue**
+
+```{r}
+library(ggplot2)
+plot5 <- ggplot(
+  data = overall_data,
+  mapping = aes(x = avg_grad_rate, y = total_industry_impact)
+) +
+  labs(title = "Visual relationship between the video games revenue and education ",
+       width = 60, 
+       x = "Average Graduation Rate", 
+       y = "Video Games Revenue") +
+  geom_point() +
+  geom_smooth(method = lm,
+              color = "red",
+              size = 0.3)
+plot5
+```
+
+
+The relationship between the 2 variables seems to be following the red line, which represents a linear relationship. We can see that there is a relationship between the two variables but none positive nor negative. Data points are forming a flat line meaning that graduation rate increases while video games revenue is constant.
+ 
+#### **4.7.3 Link between violence, video games revenue and education**
+
+
+Indeed, we want to know if there is a link between the number of arrests and the education level, graduation rate and the video games industry revenue. In order, to do that, we can first plot the 3 variables on a interactive graph, using the packages *plotly* to see if graphically a correlation seems to appear. We will use your dataset already joined before, *overall data* selecting only the relevant one to perform our scatter plot.
+
+
+```{r}
+triple_var_plot_1 <- plot_ly(overall_data, x = ~arrests_percapita, y = ~fedtax_percapita, z = ~avg_grad_rate,
+               marker = list(size = ~5, color = ~state))
+triple_var_plot_1 <- triple_var_plot_1 %>% add_markers(marker = list(color = "#336600",text = ~state, font = list(size =1, color ="#336600")))
+triple_var_plot_1 <- triple_var_plot_1 %>% layout(scene = list(xaxis = list(title = 'Number of Arrests'),
+                                   yaxis = list(title = 'Video Games Revenue'),
+                                   zaxis = list(title = 'Average Graduation Rate')),
+                      annotations = list(
+                          x = 1.13,
+                           y = 1.05,
+                          xref = 'paper',
+                          yref = 'paper',
+                          showarrow = FALSE
+                       ))
+                       
+triple_var_plot_1
+```
+
+
+This plot will summarize all the assumptions that we made since the beginning. Indeed, we thought that they might have a positive correlation between the number of arrests and the video games revenue, but here with the addition of the education variables, we can see that it indeed does not exist. There is barely any point on the **3D scatter plot** regarding the education and only a cloud of points for the 2 other variables. 
+
+To sump up, since only of the variable we want to link with the violence level of the states seems to represent a positive relationship, we can conclude that the sales of video games may have a link with the level of criminality in the state, but we can see from the graph that including the education variable does not seem to hold that assumption, therefore education might not be an underlying factor in the violence residing in the states and that does neither influence the video games revenue. Whether a state has a good education level or not certainly does not impact the criminality in the state.
+
+
+### **4.8 Mapping the unemployment rate per state**
+
+
+Here, we use the data regarding the unemployment rate across the states. We created a map with the percentage of unemployment all across the states. This percentage takes into account all ages. We create this map using the packages **plotly** and **sf**, this allows us to create a map using the function <mark>ggplot()</mark> at first, that will give you a colored map with the unemployment rate per state. Then, we use the function <mark>ggplotly(</mark>, this handling allows us to make our map once again interactive and easier to use and understand.
+
+```{r}
+#Install required packages 
+library(plotly)
+library(sf)
+#Merge the geographical data with the unemployment data 
+unemp.geo <- left_join(states_3, unemployment_data2, sort=FALSE, by="state")
+unemp.geo <- unemp.geo[order(unemp.geo$state), ]
+unemp.geo <- unemp.geo[,-3] 
+unemp.geo
+#Mapping 
+map4 <- ggplotly(ggplot(unemp.geo) + 
+  geom_sf(aes(fill = unemployment_rate, label=state)) +
+  theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(), 
+axis.text.y=element_blank(), axis.ticks.y=element_blank(),plot.title = element_text(face = "bold",hjust = 0.5)) +
+ggtitle("Unemployment in the USA") +
+  scale_fill_gradient(name = "Unemployment rate", low = "#FFFFCC" , high = "#336600"))
+map4
+```
+
+In this map, we can see that the state with the lowest unemployment rate is South Dakota, with 4.3. There is a sizable difference with the highest one which goes for Nevada with 13.5. If we want to make an assumption already regarding the crime concentration and the unemployment, we can look at the states with the highest crimes comitted which were stated in the 4.1 part and are  Tennessee, Virginia and North-Carolina (using the scaling map). The latest have respectively a 7.4, 6.2, 7.1 unemployment rate. If we compare this map to the scaling one,those rates can be considered as on average or even low ,so we could think that there is a slight relationship with the unemployment rate and the number of crimes in a state. 
+ 
+### **4.9 Mapping poverty in the USA**
+
+
+Poverty can have an impact on people's lives , on ways of entertainment and how to participate in social activities. It is also a hard situation that can bring people to do things that they wouldn't do just to obtain what they can't without money. We are going to see now, via two different maps, the poverty situation within the different states, and where are the best and worst medium household incomes of the US. We proceeded by joining *states* and *poverty_data2* and making sure that we removed the NA values :
+
+* Map 5 represents the poverty percentage of each state
+
+* Map 6 represents the medium household income of each state
+  
+```{r}
+# Mapping the violent crimes in the USA 
+poverty_data3 <- poverty_data2 %>%
+select(state,pov_perc_all_ages, med_househ_inc) %>%
+left_join(states, by = "state")
+poverty_data3 <- poverty_data3 %>% filter(!is.na(group))
+map5 <- ggplotly(ggplot(poverty_data3 , aes(long,lat)) + 
+    geom_polygon(aes(group= state, fill = pov_perc_all_ages),color="black") +
+    theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(),
+          axis.text.y=element_blank(), axis.ticks.y=element_blank(),plot.title = element_text(face = "bold",hjust = 0.5)) +
+    ggtitle("Percentage of poverty per state in the USA") +
+   scale_fill_gradient(name ="Percentage of poverty",low = "#FFFFCC" , high = "#336600") +
+    coord_map())
+    
+map5
+```
+
+```{r}
+# Mapping the medium household income in the USA 
+map6 <- ggplotly(ggplot(poverty_data3 , aes(long,lat)) + 
+    geom_polygon(aes(group= state, fill = med_househ_inc),color="black") +
+    theme(axis.title.x=element_blank(), axis.text.x=element_blank(), axis.ticks.x=element_blank(), axis.title.y=element_blank(),
+          axis.text.y=element_blank(), axis.ticks.y=element_blank(),plot.title = element_text(face = "bold",hjust = 0.5)) +
+    ggtitle("Medium household income in the USA") +
+  scale_fill_gradient(name ="Scale of medium income",low = "#FFFFCC" , high = "#336600")+
+    coord_map())
+map6
+```
+
+It seems like there is a strong correlation between poverty and medium household income. We can clearly see that the poorest states are Louisiana, Mississippi and New Mexico with more than 17,5% of their population considered as poor.
+
+What is interesting to see, is that compared to the video games revenue map, the poorest states, are among those which buy less video games.When we compare the poverty map to the other maps, it doesn't seem to have a correlation between poverty and crime, as we can see that Texas, that is richer and more populated than Louisiana and Mississippi for example, have a biggest density of crime. 
+
+Based on that only, we could say that the richer the state the higher is the crime density, but keeping Texas as an example, we can see that Idaho is a richer state. Nevertheless, Idaho has a lower crime density than Texas, which goes against the idea of a certain correlation between poverty and crime.
+When comparing the poverty map to the unemployment rate, no concrete correlation neither can be revealed, as we have the highest unemployment rates in 
+California and Nevada, which are clearly not the states that have the highest poverty rates.
+Finally, poverty doesn't seem to have a strong impact on the expenses in video games by the population. The maps and plots do not describe a correlation between poverty and video games revenue. 
+
+We will later see during the analysis if poverty is really not correlated with all these factors, by confronting our data to more precise regressions and plots, that could reveal some links that we cannot foresee with the maps.
+
+
+## **5.Analysis**
+
+
+### **5.1 Does the video games industry encourage the number of arrests in the different American states?**
+
+Let's start with measuring the strength and direction of the linear relationship between number of arrests and video games industry revenue with  <mark>corrplot.mixed()</mark> 
+
+```{r}
+# Install packages
+library(corrplot)
+# Correlation coefficient 
+corrplot <- corrplot.mixed(cor(overall_data[c(16,17)]),upper ="square",lower = "number",addgrid.col = "black",tl.col = "black") 
+```
+
+The correlation coefficient is almost null, **0,04** indicates a very weak positive linear relationship between two variables. This means that there is a very little association between the revenue per capita generated by the video games industry and the number of arrests per capita. A correlation coefficient of **0,04** is close to 0 and therefore indicates no relationship at all between the two variables. 
+
+To determine the effect and not the relationship of the video games industry revenue on number of arrests, a linear regression model was created using the *overall_dataset*. In the EDA, we used to scale the data with our **scaling_map**. To facilitate the correlation analysis in this part we are going to scale our variables numerically by dividing the *total_all_classes* and *total_industry_impact*  by the *estimated_pop_2020*. These computations will give us respectively the number of arrests per capita and the video games industry revenue per capita. 
+
+```{r}
+# Scaling our variables for the regression 
+overall_data <- overall_data %>% mutate(fedtax_percapita = total_industry_impact/estimated_pop_2020)
+overall_data <- overall_data %>% mutate(arrests_percapita = total_all_classes/estimated_pop_2020)
+# Visualizing the relationship
+plot5 <- plot(overall_data$fedtax_percapita ,overall_data$arrests_percapita, main="There is no linear relationship between our variables", xlab="Video Games Revenue", ylab="Number of arrests")
+plot5 <- overall_data %>% 
+ggplot(aes(fedtax_percapita,arrests_percapita)) +
+labs(title = "Number of crimes increase even when video games revenue is stable ", x =
+                           "VG Revenue per capita ", y = "Number of violent crimes per capita") +
+geom_point(size = 1) +
+geom_smooth(method = lm,
+    color = "red",
+ size = 0.3)
+plot5 
+```
+
+The scatterplot resulted in a vertical cloud of dots that means that in 2020 the number of arrests was increasing in all states while the video games revenue was constant. There is no linear relationship. 
+
+
+To linearise relationships between variables, which can make it easier to identify trends and patterns in the data we will apply a log transformation to the variables <mark>log10()</mark>
+
+
+```{r}
+# Log transformation
+overall_data <- overall_data %>% mutate(log_arrests_percapita =(-1)*log10(arrests_percapita)) %>% mutate(log_fedtax_percapita =(-1)*log10(fedtax_percapita)) 
+# Plotting transformed variables
+plot5.1 <- overall_data %>% 
+ggplot(aes(log_fedtax_percapita,log_arrests_percapita)) +
+labs(title = "Number of crimes increase even when video games revenue is stable ", x =
+                           "VG Revenue per capita ", y = "Number of violent crimes per capita") +
+geom_point(size = 1) +
+geom_smooth(method = lm,
+    color = "red",
+ size = 0.3)
+plot5.1
+```
+
+Given that we end up having negative values applying the <mark>log10()</mark> , we have multiplied values by (-1). The log transformation has spread out the data so that it is possible to see a cloud of dots around the red line which is an indicator of any linear relationship. We can conclude that there is a link between both variables but not a strong linear relationship. 
+
+
+```{r}
+# Fitting the linear regression model 
+reg1 <-lm(overall_data$fedtax_percapita~ overall_data$arrests_percapita)
+summary(reg1)
+```
+
+Our regression shows that our $R^2$ is equal to **0.0018**, in other words ,the regression model explains **0,18%** of the variation in the dependent variable (Video games revenue). This means that around **99,82%** of the variation in the dependent variable is not explained by the model. That is why we have to take into consideration other social variables that could explain the variation of revenue.
+
+Our slope coefficient and intercept are not statistically significant, it is indicated by a p-value that is greater than a predetermined significance level (α=1%,5%,10%). 
+
+The observed relationship between the video games industry and number of arrests is likely due to chance rather than a true underlying relationship.
+
+An intercept that is not statistically significant, even if the video games revenue is equal to zero the number of arrests is different than zero meaning that there are other factors that are influencing the dependent variable that are not accounted for in this model 
+
+To answer our question, there is no meaningful relationship between the number of arrests by state and the video games industry revenue and the effect is not significant enough to draw conclusions about the effect of video games on  violence. In order to improve our model we have to take into account other social variables that could strengthen our understanding of the effect of video games on violence.  
+
+
+### **5.2 What types of crime may be encouraged by the video games industry?**
+
+
+In this question, we will now see if a type of crime is more motivated by video games than another. As mentioned before , we have decided to split crime into two types which are *violent* and *non_violent*.
+
+To analyze the relationship between violent/non-violent crime and the video games industry, we use a linear regression model. The independent variable in this case would be the violent/non-violent crime per capita, and the dependent variable would be the size of the video games industry (measured in terms of revenue per capita).
+
+However, it is important to note that this type of analysis can only show a statistical relationship between violent/non-violent crime and the video game industry. It cannot prove that the video games industry causes violent crime.
+
+
+#### **5.2.1 Violent Crimes**
+
+```{r}
+# Scaling our variables for the regression 
+overall_data <- overall_data %>% mutate(violent_crime_percapita = violent_crime/estimated_pop_2020)
+# Plotting video games industry revenue per capita against the number violent crime per capita 
+plot6 <- overall_data %>% 
+ggplot(aes(fedtax_percapita,violent_crime_percapita)) +
+labs(title = "Number of crimes increase even when video games revenue is stable ", x =
+                           "VG Revenue per capita ", y = "Number of violent crimes per capita") +
+geom_point(size = 1) +
+geom_smooth(method = lm,
+    color = "red",
+ size = 0.3)
+ 
+ plot6
+```
+
+The correlation between these variables seems to be positive however it is difficult to quantify the strength of it. The dots are making a straight vertical line which means that an increase in the number of violent crimes is not strongly related to an increase of the video games revenue.
+
+```{r}
+# Log transformation 
+overall_data <- overall_data %>% mutate(log_violent_percapita =(-1)*log10(violent_crime_percapita)) 
+# Plotting transformed variables 
+plot6.1 <- overall_data %>% 
+ggplot(aes(log_fedtax_percapita,log_violent_percapita)) +
+labs(title = "Number of crimes increase even when video games revenue is stable ", x =
+                           "VG Revenue per capita ", y = "Number of violent crimes per capita") +
+geom_point(size = 1) +
+geom_smooth(method = lm,
+    color = "red",
+ size = 0.3)
+plot6.1
+```
+
+Still there is no clear relationship between the number of violent crimes per capita and the video games revenue per capita, dots are spread all over the red line. Dots are making a cloud that affirm that there is no there is no linear relationship between the two variables, there could be a link.
+
+
+Let's fit the linear model using the <mark>lm()</mark> function and report its summary.
+
+
+```{r}
+reg2 <- lm(overall_data$fedtax_percapita~ overall_data$violent_crime_percapita)
+summary(reg2)
+```
+
+
+Neither the intercept nor the slope are statistically significant. As suggested by the respective t-tests in the summary outputs, **b1** is interpreted as the increase in video games revenue per capita per unit increase of the number of violent crimes per capita.
+Since the profits are in millions, it means that, as we increase the video games revenue per capita by 1$, the number of violent crimes per capita increase by 3.381e-0. 
+
+In addition to that we have a weak $R^2$ ,only approximately **3,43%** of the variation of the response is explained by our simple linear model. A low R-squared value suggests that our regression model is not a good fit for the data, and that other factors may be influencing video games revenue.
+ 
+#### **5.2.2 Non-Violent Crimes**
+
+```{r}
+# Scaling our variable for the regression 
+overall_data <- overall_data %>% mutate(nonviolent_crime_percapita = non_violent_crime/estimated_pop_2020)
+plot7 <- overall_data %>% 
+ggplot(aes(fedtax_percapita,nonviolent_crime_percapita)) +
+labs(title = "What do you see?", x =
+                           "Revenue per capita ", y = "Number of non-violent crimes per capita") +
+geom_point(size = 1) +
+geom_smooth(method = lm,
+    color = "red",
+ size = 0.3)
+ 
+ plot7
+```
+
+The scatterplot is very similar to the about *violent_crime*. It appears to be a positive relationship between video games revenue per capita and number of non violent crimes per capita, but it is challenging to determine the extent of the correlation. 
+
+```{r}
+# Log transformation 
+overall_data <- overall_data %>% mutate(log_nonviolent_percapita =(-1)*log10(nonviolent_crime_percapita)) 
+# Plotting transformed variables 
+plot7.1 <- overall_data %>% 
+ggplot(aes(log_fedtax_percapita,log_nonviolent_percapita)) +
+labs(title = "a", x =
+                           "VG Revenue per capita ", y = "Number of non violent crimes per capita") +
+geom_point(size = 1) +
+geom_smooth(method = lm,
+    color = "red",
+ size = 0.3)
+plot7.1
+```
+
+In order to find the best fit that describes the relationship of these two variables and make predictions, we will do a linear regression model as well. 
+
+```{r}
+reg3 <- lm(overall_data$fedtax_percapita~ overall_data$nonviolent_crime_percapita)
+summary(reg3)
+```
+
+The summary outputs indicate that the intercept and slope are not statistically significant, as indicated by the t-tests. The slope, or b1, shows that there is a positive relationship between video games revenue per capita and the number of non violent crimes per capita.
+
+R-squared value is significantly almost null, it indicates that **0,91%** of the variation of the response is explained by our simple linear model which lets us understand that an important part of this effect is not explained by our model.
+
+#### **5.2.3 Scaterplotting violent crime vs non violent crime vs video games revenue**
+
+```{r}
+triple_var_plot_2 <- plot_ly(overall_data, x = ~log_fedtax_percapita, y = ~log_violent_percapita, z = ~log_nonviolent_percapita,
+               marker = list(size = ~5, color = ~state))
+triple_var_plot_2 <- triple_var_plot_2 %>% add_markers(marker = list(color = "#336600",text = ~state, font = list(size =1, color ="#336600"))) 
+triple_var_plot_2 <- triple_var_plot_2 %>% layout(scene = list(xaxis = list(title = 'Video games revenue'),
+                                   yaxis = list(title = 'Number of violent crimes'),
+                                   zaxis = list(title = 'Number of non violent crimes')),
+                      annotations = list(
+                          x = 1.13,
+                           y = 1.05,
+                          xref = 'paper',
+                          yref = 'paper',
+                          showarrow = FALSE
+                       ))
+                       
+triple_var_plot_2
+```
+
+This scatterplot is a summary of the relationships between our three variables. Data dots are mostly located in the upper part of our 3D scatter plot.
+Relation between violence, whether it is violent or not, and video games revenue does exist.  
+
+If we compare the linear regression models made for each type of crime we can conclude that violent crimes model has a higher $R^2$ than non violent crimes model. However ,other potential factors that could affect crime rates, such as socioeconomic status, access to education and healthcare, and availability of social services have to be included in further models.
+
+
+### **5.3 To what extent does the video games industry impact violence in higher education level states compared to lower ones?**
+
+
+#### **5.3.1 Comparison of violence in higher education level state**
+
+
+In our exploratory data part, we already drew a conclusion based on maps and graphs.Here we will use more statistical tools to determine if a relationship between those 3 factors does or not exist.
+
+Here, since we have 3 factors (high education level,low education relationship analysis,number of arrests), we can separate our analysis to provide an overall answer to the question. For that, we need to look at question 2 and take into account if a correlation between violence, the number of arrests, and the revenue generated by the sales of video games does exist. Looking at previous corrplots from question 2, we can see that no strong linear relationship seems to exist between the revenue and the crime, whether it is violent or non-violent. But this is for the general overall relationship, now if we want to add the dimension of education, education might change our statements. First, we can compute the relationship with violence and the education rate and see if the relation seems to be linear or not.
+
+```{r}
+attach(overall_data)
+reg4 <-lm(arrests_percapita~avg_grad_rate)
+summary(reg4)
+```
+
+As we saw in the part, **4.8.1** with a *ggplot*, graphically we could see a slight linear relationship between violence and education. There are several observations for every graduation rate and we have more of a cloud of observations, but the dots are following a line that is slightly increasing as we advance in higher values. Thus, there might be a relationship. 
+
+That is for the graphical part, but to sharpen our analysis and have a clear answer, we computed a linear regression with the 2 variables *avg_grad_rate* and *arrests_percapita*, which is the scaled data representing all crimes. With the results derived from the regression, we can now confirm that there is no relationship, even though we could think of a slight one only referring to the graph. Our **p-value** is not significant, with a value of **80.2%**, plus it has no star on the side, meaning it is not significant. Also, our **R-squared**, $R^2$, is really small, 0,001326 , and we know that for a linear regression we wish $R^2$ to be as large as possible because it represents the **correlation coefficient.** Therefore, if the correlation coefficient is low, so is the relationship. 
+
+
+#### **5.3.2 Analysis of violence, video games and education level**
+
+Now that we know that there is no link between education and violence, we can introduce another variable that is important to conclude the analysis of this question: does video games have a relationship between one of them?
+
+We used «mark\>ggpairs()</mark> this type of plot lets you visualize the relationship between each combination of the variables you want to interpret. For that we have to install the package **GGally** and use the package that we already know **ggplot2** .This enables us to have a graphical and a numerical interpretation for all the variables.
+
+```{r}
+library(ggplot2)
+library(GGally)
+corrplot1 <- ggpairs(overall_data[,c("arrests_percapita", "avg_grad_rate", "fedtax_percapita")])
+corrplot1
+```
+
+In terms of number, we can notice that the highest correlation stands between crimes and video games revenue, and is of **3.4%**, it is the strongest but it is indeed a really weak number. Then, you have a correlation of **-3.6%** between crime and the average graduation rate. And the last one is  of **-1.8%** between the graduation rate and the video games sales. Here, we can notice that two of the three correlations are negative. This means that when a variable increases, the other one decreases. If we take the example of education and crime, this will mean that for an increasing number of crimes, we will have a decreasing education level, which makes sense. But, with the regression we made just before on the **5.3.1**, we saw that it was not significant at any level, therefore we cannot use this to make a conclusion on the relationship between those variables. The results are not surprising, indeed, in previous graph analysis we already conclude of a weak correlation between those variables separately and here the results state the same with the numbers.
+
+```{r}
+library(knitr)
+knitr::kable(cbind(
+  c(
+    "**Arrests/Education**",
+    "**Arrests/Video Games revenue**",
+    "**Video Games Revenue/Education**"
+  ),
+  c(
+    "-3.6%",
+    "3.4%",
+    "-1.8%%"
+  )
+), col.names = c('Correlation', 'Percentage'))
+```
+
+#### 5.3.3 Multiple linear regression on Crime, Video games and Education
+
+To conclude, we want to perform a multiple linear regression on these variables.
+
+```{r}
+library(car)
+library(dplyr)
+mod1 <- lm(overall_data$fedtax_percapita~overall_data$avg_grad_rate+overall_data$arrests_percapita)
+summary(mod1)
+```
+
+With this result, we can see different things. On the part of the coefficients, we can see that for the variable regarding the crime, the **p-values** none of the variables at significant at any level, with the respective value of **85.9%**, **90,9%**, and **81.9**. This is not surprising since we failed to notice relationships between them on the previous part of the project. That is for the coefficient part, if we take the part taking into account the general regression, we see that the **p-value** is not significant with a value of **96,64%**. Adding to that, the **Multiple R-squared** is only of **0.1452%**, which is not enough to state the existence of a relevant relationship between those 3 variables, in the theory, it should be at least of **70%** to be considered significant.
+
+
+### **5.4 Is video games revenue higher or lower in higher unemployment states compared to lower unemployment states?**
+
+
+#### **5.4.1 Impact of unemployment rate on video games industry revenue**
+
+Another social aspect we decided to analyze compared to the impact of the video games industry revenue is the unemployment rate. Does it have an impact on this revenue ? And if yes, what could be the underlying factors for this relationship? In order to see if a relationship links those two, we want to analyze the presence of a potential correlation between them. To start, we can plot on a graph the relationship between those two variables. For that we will use the function <mark>ggplot()</mark>.
+
+```{r}
+library(ggplot2)
+plot8 <- ggplot(
+  data = overall_data,
+  mapping = aes(x = unemployment_rate, y = fedtax_percapita)
+) +
+  labs(title = "Unemployment rate vs. Video Games Sales Revenue", subtitle = "We notice a pretty flat placement of the data on the graph",
+       width = 60, 
+       x = "Unemployment Rate ", 
+       y = "Video Games Sales Revenue ") +
+  geom_point() +
+  geom_smooth(method = lm,
+              color = "red",
+              size = 0.3)
+              
+plot8
+```
+
+On this graph, the data placement is linear, but flat. Therefore, the presence of a positive relationship between those 2 variables is weak. It seems to tell us that whether or not the unemployment rate is high the spending on video games is not higher or lower. We have now to see from a more statistical perspective if this graphical assumption is correct and makes sense.
+
+We use a <mark\>corrplot</mark> to do so, this results in a matrix with the variables of interest coming from our merged data set including all the data. Here, we are only interested by the **unemployment data** and the **video games sales revenue**, which is present in the federal tax data set.
+
+```{r}
+library(corrplot)
+corrplot2 <- corrplot(cor(overall_data[,c(9,16)]), method = "circle")
+```
+
+After, doing your corr plot, we can see that there is a correlation of approximately 0.4 between the unemployment rate and the revenue generated by video games, represented by the variable *fedtax_percapita*, indeed, this is a small correlation which can lead us to think that there is no real link between those two variables. Therefore, the employment rate has little or no impact on the consumption of video games, no more revenue is spent on the video games whether you have a job or do not have one. But, we need to perform a linear regression in order to see if this correlation is significant or not and can be interpreted as having an impact.
+
+```{r}
+attach(overall_data)
+reg5 <-lm(fedtax_percapita~unemployment_rate)
+summary(reg5)
+```
+
+With the results of the linear regression, we can see that the **p-value** is  significant at a 10% level, with a value of **7.82%**, so we see that even though we thought a slight link could exist between the variables, statistically it is proven to be non-existent. In addition, the value of the **R-squared**,$R^2$ is also only of **6.32%** which is low. To conclude, with all our graphical and statistical computation, it seems that the correlation between the unemployment rate and the video games sales revenue is non-existent.
+
+
+### **5.5 Is video games revenue higher in higher poverty rate states, and does poverty have an impact on crime?**
+
+#### **5.5.1 Are video games revenue and poverty correlated?**
+
+We will first check through a linear regression if poverty is correlated with the level of income of video games by state, in order to know if poverty has an influence on the consumption of video games. We use the <mark>reg</mark> function and construct a graph with <mark>ggplot</mark> to facilitate the analysis.
+
+```{r}
+reg6 <-lm(overall_data$fedtax_percapita~ overall_data$pov_perc_all_ages)
+summary(reg6)
+```
+```{r}
+library(ggplot2)
+plot9 <- ggplot(
+  data = overall_data,
+  mapping = aes(x = pov_perc_all_ages, y = fedtax_percapita)
+) +
+  labs(title = "Poverty rate vs. Video Games Sales Revenue", subtitle = "We notice a pretty flat placement of the data on the graph",
+       width = 60, 
+       x = "Poverty Rate ", 
+       y = "Video Games Sales Revenue ") +
+  geom_point() +
+  geom_smooth(method = lm,
+              color = "blue",
+              size = 0.3)
+```
+
+We see first of all that the **coefficient** of **-3.245e-05** as well as the **R-squared** of **0.004757** are very low, which shows that poverty does not explain video game consumption at all. Moreover, with the **p-value** of **0.6377** being high, we can certainly state that poverty and video game consumption are not correlated, as it is not significant at any level.
+
+The flat curve of the graph confirms this hypothesis that poverty leads neither to more nor to less consumption. In any case, it is not a sufficient variable to explain video game consumption.
+
+#### **5.5.2 Crime poverty**
+
+Since our final question is to study violence in the US, we need to check whether poverty has an influence on arrests. 
+We again run a regression and add a <mark>corrplot</mark>, also including the per capita revenues of the video game industry.
+
+```{r}
+reg7 <-lm(overall_data$arrests_percapita ~ overall_data$pov_perc_all_ages)
+summary(reg7)
+```
+
+```{r}
+library(corrplot)
+corrplot3 <- corrplot.mixed(cor(overall_data[,c(16,17,3)]),upper ="square",lower = "number",addgrid.col = "black",tl.col = "black")
+```
+
+Again, we have a very low **coefficient** of **0.0004399** and **R-squared** of **0.01525** and a **p-value** of **0.398**, non-significant at any level. We can therefore say that poverty does not explain the crime rate in the USA.
+
+The <mark>corrplot</mark> shows us low correlation coefficients between poverty and arrest (0.12) and between poverty and income, confirming our last two interpretations. We would have thought that poverty would have more influence on these two values, especially on crime, but the dataset we have does not allow us to affirm this, on the contrary.
+
+
+### **5.6 What are the factors that impact violence in the USA and does the video games industry significantly impact violence ?**
+
+Our main motivation was to understand whether video games consumption had an influence on crime in the US, and to understand if there were other factors that influenced US crime.
+So in order to put it all together, we did a multiple linear regression, plots and an overall corrplot.
+
+```{r}
+reg8 <-lm(overall_data$arrests_percapita ~ overall_data$fedtax_percapita + overall_data$unemployment_rate + overall_data$avg_grad_rate + overall_data$pov_perc_all_ages)
+summary(reg8)
+```
+As far as plots are concerned, we used <mark>avPlot</mark> from the package **car** because it allows us to have one plot per explanatory variable.
+
+```{r}
+library(car)
+avPlots(reg8, ylab= "Number of arrests per capita")
+```
+
+```{r}
+library(corrplot)
+corrplot4 <- corrplot.mixed(cor(overall_data[,c(17,16,9,10,3)]),upper ="square",lower = "number",addgrid.col = "black",tl.col = "black")
+```
+
+The summary of the multiple regression still gives us a low **R-squared** of **0.07998**, a **p-value** of **0.4409** which is not significant at any level. This allows us to say that our variables do not explain crime in the US or explain it too slightly. The plots only confirm our previous interpretations and the multiple regression, as we face very slight slopes that do not allow us to assert a link between our variables and crime.
+Finally, the corrplot, which includes all of our variables, gives us very low correlation coefficients between the different variables and crime. 
+
+
+Our data therefore does not allow us to confirm that there is a link between the consumption of video games and violence, nor between unemployment, level of education, poverty and violence.
+
+## **6.Conclusion** 
+
+### **6.1 Results summary** 
+
+We started this analysis with the hypothesis that the use of video games revenue might have had an impact on violence in the USA in 2020 and to confirm it we have added other social factors to our model that could determine violence as well: education, poverty and unemployment. The idea was that as video games become more and more realistic, they might desensitize video games players to real-life violence and increase the number of arrests due to violent crimes.
+
+First, we mapped most of our variables and tried to compare them to each other to notice some relationships.  Our first observation was that states having high video games revenues were the ones having the highest estimated population. However, some states were standing out. Then we added number of arrests variable to our observations, and it led to a weak relationship between criminality and video games. To specify this possible relationship, we noticed that it tends to be more non-violent crimes in most of American states. 
+
+Hence, we added the education variable, our results were contradictory because states having a high graduation rate had whether a high number of arrests or a low one. To get a clearer information, we plotted some variables and ended up with a positive linear relationship between the average graduation rate and number of arrests and a constant linear relationship between video games revenue and graduation rate. 
+
+However, exploring data step by step in our EDA part was very confusing given that every we added a variable the observation made before was contradicted. For example, adding education to criminality and video games revenue contradicted any link between criminality and video games revenue.
+
+We added the unemployment rate poverty to our exploratory data analysis and ended up with neither a clear relationship between unemployment rate and number of arrests nor between poverty rate and video games revenue. 
+
+Our EDA allowed to have an overview of our data to answer our research questions with linear regression models but this time we had numerical scaled data. We started from comparing video games revenue, to all type of crimes, violent crimes, nonviolent crimes, unemployment rate, graduation rata and unemployment rate. Through our regressions models we could not draw any conclusion about our topic. To conclude, we concluded that in 2020 video games revenue had no impact on violence in the USA.
+
+
+### **6.2 Limitations**
+
+As mentionned before , our project could not lead to any conclusion about the impact of video games on violence in the USA in 2020. On the one hand,
+we had a lack of data , data that was available was not complete. We would have neede more information about video games users , type of video games sold in every however this type of data is very private and therefore hard to be accessible on the internet. Another aspect that could have helped is the some characteristics about users to determine exactly if the use of video games can have an  impact on violence.
+
+On the other hand,the COVID pandemic definitely impacted many aspects of society.  In terms of revenue, the video game industry has generally seen an increase during the COVID-19 pandemic as more people have turned to video games as a form of entertainment while spending more time at home. 
+
+The COVID-19 pandemic has also had a significant impact on poverty, unemployment, and graduation rates in the United States. The pandemic has led to widespread economic disruption, and many people have lost their jobs or had their hours reduced. This has contributed to an increase in poverty and unemployment rates, particularly among low-wage workers and those in industries that have been heavily impacted by the pandemic, such as hospitality and retail. The graduation rate may also be affected as some students may have had difficulty completing their studies due to disruptions caused by the pandemic.
+
+It is also worth noting that the COVID-19 pandemic may have had an impact on the number of arrests in the United States, although the exact nature of this impact is difficult to quantify. The pandemic may have affected the ability of law enforcement agencies to respond to and investigate crimes, and may have also led to changes in crime patterns as people spend more time at home.
+
+
+All of these limitations made it hard to conlude anything about the impact of video games on violence in the USA in 2020
+
+
+### **6.3 References** 
+
+Newzoo. (2022) Top 10 Countries/Markets by Game Revenues: https://newzoo.com/insights/rankings/top-10-countries-by-game-revenues
+
+NPD (July 20, 2020) More People Are Gaming In The U.S., And They’re Doing So Across More Platforms:
+https://www.npd.com/news/press-releases/2020/more-people-are-gaming-in-the-us/#:~:text=PORT%20WASHINGTON%2C%20N.Y.%2C%20July%2020,more%20than%20one%20device%20vs.
+
+Adam Isaak (December 22, 2019) Psychologists see violent video games differently than the rest of us, from CNBC:
+https://www.cnbc.com/2019/12/20/scientists-disagree-completely-on-the-impact-of-violent-video-games.html
+
+Simon Tripp et al. (2020) Video Games in The 21st Century: The 2020 Economic Impact Report for TEConomy Partners LLC:
+https://www.theesa.com/video-game-impact-map/wp-content/uploads/sites/2/2020/12/Video-Games-in-the-21st-Century-2020-Economic-Impact-Report-Final.pdf
+
+Emma Kerr and Ilana Kowarski (April 26, 2022) See High School Graduation Rates By State for U.S.News & World Report:
+https://www.usnews.com/education/best-high-schools/articles/see-high-school-graduation-rates-by-state
+
+U.S. Bureau of Labor Statistics (n.d.) Unemployment Rates for States, 2020 Annual Averages:
+https://www.bls.gov/lau/lastrk20.htm
+
+FBI Crime Data Explorer (n.d.) Arrests Offense Counts in The United States:
+https://crime-data-explorer.app.cloud.gov/pages/explorer/crime/arrest
+
+United States Census Bureau (December 2021) SAIPE State and County Estimates for 2020:
+https://www.census.gov/data/datasets/2020/demo/saipe/2020-state-and-county.html
+
+
+
+
+
+
